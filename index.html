@@ -10,7 +10,7 @@
 
     <header class="main-header">
         <div class="logo">
-            <a href="index.html">IFLANCHE</a>
+            <a href="login.html">IFLANCHE</a>
         </div>
         
         <nav class="nav-items">
@@ -21,7 +21,17 @@
                 <span>Perfil</span>
             </button>
 
-            <a href="index.html" class="btn-logout">Sair</a>
+            <a href="login.html" class="btn-logout" onclick="logout()">Sair</a>
+        </nav>
+    </header>
+
+    <script>
+        function logout() {
+            localStorage.removeItem('iflanche_matricula'); // Limpa os dados salvos
+        }
+        // ... mantenha o resto do seus scripts aqui ...
+    </script>
+
         </nav>
     </header>
 
@@ -116,10 +126,6 @@
                         <p>São Paulo do Potengi</p>
                     </div>
                 </div>
-
-                <div class="qr-code-area">
-                    <p>Seu QR Code de Acesso</p>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Qr_code_2d.png" alt="QR Code">
                 </div>
             </div>
         </div>

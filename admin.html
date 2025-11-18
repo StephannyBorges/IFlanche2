@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFLANCHE - Área Administrativa</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-dashboard admin-mode"> <header class="main-header admin-header">
+        <div class="logo">
+            <a href="login.html">IFLANCHE <span style="font-size: 0.6em; opacity: 0.8;">ADMIN</span></a>
+        </div>
+        
+        <nav class="nav-items">
+            <div class="user-badge">
+                Olá, <span id="nomeServidor">Servidor</span>
+            </div>
+            <a href="login.html" class="btn-logout" onclick="localStorage.clear()">Sair</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="dashboard-wrapper">
+            <section class="content-area full-width">
+                <div class="section-header flex-header">
+                    <div>
+                        <h1>Gerenciar Cardápio</h1>
+                        <p>Adicione ou edite as refeições da semana.</p>
+                    </div>
+                    <button class="btn-add">+ Nova Refeição</button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="meal-table admin-table">
+                        <thead>
+                            <tr>
+                                <th>Dia</th>
+                                <th>Lanche Manhã</th>
+                                <th>Almoço</th>
+                                <th>Lanche Tarde</th>
+                                <th>Ações</th> </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="day">Segunda-feira</td>
+                                <td>Fruta + Iogurte</td>
+                                <td>Feijoada Completa</td>
+                                <td>Bolo de Cenoura</td>
+                                <td class="actions-cell">
+                                    <button class="btn-action edit">✏️</button>
+                                    <button class="btn-action delete">🗑️</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="day">Terça-feira</td>
+                                <td>Pão com Queijo</td>
+                                <td>Frango Assado</td>
+                                <td>Salada de Frutas</td>
+                                <td class="actions-cell">
+                                    <button class="btn-action edit">✏️</button>
+                                    <button class="btn-action delete">🗑️</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            // Recupera o cargo salvo no login
+            const cargo = localStorage.getItem('iflanche_cargo');
+            if(cargo) {
+                document.getElementById('nomeServidor').innerText = cargo;
+            }
+        }
+    </script>
+</body>
+</html>

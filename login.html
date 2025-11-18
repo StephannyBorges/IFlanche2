@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFLANCHE - Acesso</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-login">
+
+    <div class="login-container">
+        <div class="login-header">
+            <h2>IFLANCHE</h2>
+            <p>Faça login para acessar o sistema</p>
+        </div>
+
+        <form id="formLogin" onsubmit="fazerLogin(event)">
+            <div class="login-options">
+                <label>
+                    <input type="radio" name="tipo" value="aluno" checked onclick="toggleCargo(false)"> Aluno
+                </label>
+                <label>
+                    <input type="radio" name="tipo" value="servidor" onclick="toggleCargo(true)"> Servidor
+                </label>
+            </div>
+
+            <div class="input-group" id="grupoCargo" style="display: none;">
+                <label for="cargo">Qual sua função?</label>
+                <select id="cargo" class="input-select">
+                    <option value="" disabled selected>Selecione...</option>
+                    <option value="Nutricionista">Nutricionista</option>
+                    <option value="Merendeira">Merendeira</option>
+                    <option value="Bolsista">Bolsista</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="identificacao">Matrícula / SUAP</label>
+                <input type="number" id="identificacao" placeholder="Digite sua identificação" required>
+            </div>
+
+            <div class="input-group">
+                <label for="senha">Senha</label>
+                <input type="password" id="senha" placeholder="********" required>
+            </div>
+
+            <button type="submit" class="btn-login">Entrar</button>
+
+            <div class="login-footer">
+                <a href="#">Esqueci minha senha</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Função para mostrar/esconder o select de Cargo
+        function toggleCargo(mostrar) {
+            const divCargo = document.getElementById('grupoCargo');
+            const selectCargo = document.getElementById('cargo');
+            
+            if (mostrar) {
+                divCargo.style.display = 'block';
+                selectCargo.setAttribute('required', 'true'); // Torna obrigatório se for servidor
+            } else {
+                divCargo.style.display = 'none';
+                selectCargo.removeAttribute('required'); // Tira obrigatoriedade se for aluno
+            }
+        }
+
+        // Função de Login Inteligente
+        function fazerLogin(event) {
+            event.preventDefault(); 
+
+            const radios = document.getElementsByName('tipo');
+            let tipoUsuario = 'aluno';
+            
+            for (const radio of radios) {
+                if (radio.checked) {
+                    tipoUsuario = radio.value;
+                    break;
+                }
+            }
+
+            const matricula = document.getElementById('identificacao').value;
+            localStorage.setItem('iflanche_matricula', matricula);
+
+            if (tipoUsuario === 'servidor') {
+                const cargo = document.getElementById('cargo').value;
+                localStorage.setItem('iflanche_cargo', cargo); // Salva o cargo (ex: Nutricionista)
+                
+                // REDIRECIONA PARA A PÁGINA ADMIN
+                window.location.href = "admin.html"; 
+            } else {
+                // REDIRECIONA PARA A PÁGINA DO ALUNO
+                window.location.href = "index.html";
+            }
+        }
+    </script>
+</body>
+</html>

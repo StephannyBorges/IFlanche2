@@ -443,3 +443,23 @@ body {
 .btn-action.delete:hover {
     background-color: #c82333;
 }
+/* Ajuste para o modal de edição ficar bonito */
+#modalEdicao h2 {
+    color: var(--if-green);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#modalEdicao .input-group label {
+    color: #555;
+}
+
+/* Garante que os inputs do modal ocupem largura total e fiquem bonitos */
+#modalEdicao input, 
+#modalEdicao select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}

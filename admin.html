@@ -6,7 +6,9 @@
     <title>IFLANCHE - Área Administrativa</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="page-dashboard admin-mode"> <header class="main-header admin-header">
+<body class="page-dashboard admin-mode">
+
+    <header class="main-header admin-header">
         <div class="logo">
             <a href="login.html">IFLANCHE <span style="font-size: 0.6em; opacity: 0.8;">ADMIN</span></a>
         </div>
@@ -15,7 +17,7 @@
             <div class="user-badge">
                 Olá, <span id="nomeServidor">Servidor</span>
             </div>
-            <a href="login.html" class="btn-logout" onclick="localStorage.clear()">Sair</a>
+            <a href="login.html" class="btn-logout" onclick="localStorage.removeItem('iflanche_cargo')">Sair</a>
         </nav>
     </header>
 
@@ -27,7 +29,7 @@
                         <h1>Gerenciar Cardápio</h1>
                         <p>Adicione ou edite as refeições da semana.</p>
                     </div>
-                    <button class="btn-add">+ Nova Refeição</button>
+                    <button class="btn-add" onclick="abrirModal()">+ Nova Refeição</button>
                 </div>
 
                 <div class="table-responsive">
@@ -38,29 +40,10 @@
                                 <th>Lanche Manhã</th>
                                 <th>Almoço</th>
                                 <th>Lanche Tarde</th>
-                                <th>Ações</th> </tr>
+                                <th>Ações</th>
+                            </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td class="day">Segunda-feira</td>
-                                <td>Fruta + Iogurte</td>
-                                <td>Feijoada Completa</td>
-                                <td>Bolo de Cenoura</td>
-                                <td class="actions-cell">
-                                    <button class="btn-action edit">✏️</button>
-                                    <button class="btn-action delete">🗑️</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="day">Terça-feira</td>
-                                <td>Pão com Queijo</td>
-                                <td>Frango Assado</td>
-                                <td>Salada de Frutas</td>
-                                <td class="actions-cell">
-                                    <button class="btn-action edit">✏️</button>
-                                    <button class="btn-action delete">🗑️</button>
-                                </td>
-                            </tr>
+                        <tbody id="tabelaCorpo">
                             </tbody>
                     </table>
                 </div>
@@ -68,12 +51,166 @@
         </div>
     </div>
 
+    <div id="modalEdicao" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-modal" onclick="fecharModal()">&times;</span>
+            <h2 id="tituloModal">Nova Refeição</h2>
+            
+            <form id="formRefeicao" onsubmit="salvarRefeicao(event)">
+                <input type="hidden" id="idRefeicao"> <div class="input-group">
+                    <label>Dia da Semana</label>
+                    <select id="diaSemana" class="input-select" required>
+                        <option value="Segunda-feira">Segunda-feira</option>
+                        <option value="Terça-feira">Terça-feira</option>
+                        <option value="Quarta-feira">Quarta-feira</option>
+                        <option value="Quinta-feira">Quinta-feira</option>
+                        <option value="Sexta-feira">Sexta-feira</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Lanche Manhã</label>
+                    <input type="text" id="lancheManha" placeholder="Ex: Fruta + Iogurte" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Almoço</label>
+                    <input type="text" id="almoco" placeholder="Ex: Feijoada" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Lanche Tarde</label>
+                    <input type="text" id="lancheTarde" placeholder="Ex: Bolo" required>
+                </div>
+
+                <button type="submit" class="btn-login" style="margin-top: 10px;">Salvar Dados</button>
+            </form>
+        </div>
+    </div>
+
     <script>
+        // --- DADOS PADRÃO (Para iniciar o sistema na primeira vez) ---
+        const dadosIniciais = [
+            { id: 1, dia: 'Segunda-feira', manha: 'Fruta + Iogurte', almoco: 'Feijoada Completa', tarde: 'Bolo de Cenoura' },
+            { id: 2, dia: 'Terça-feira', manha: 'Pão com Queijo', almoco: 'Frango Assado', tarde: 'Salada de Frutas' }
+        ];
+
+        // --- FUNÇÕES PRINCIPAIS ---
+
+        // 1. Carregar dados ao abrir a página
         window.onload = function() {
-            // Recupera o cargo salvo no login
+            // Nome do Servidor
             const cargo = localStorage.getItem('iflanche_cargo');
-            if(cargo) {
-                document.getElementById('nomeServidor').innerText = cargo;
+            if(cargo) document.getElementById('nomeServidor').innerText = cargo;
+
+            renderizarTabela();
+        }
+
+        // 2. Função que desenha a tabela na tela
+        function renderizarTabela() {
+            // Pega do LocalStorage OU usa os dados iniciais
+            let cardapio = JSON.parse(localStorage.getItem('iflanche_cardapio'));
+            
+            if (!cardapio || cardapio.length === 0) {
+                cardapio = dadosIniciais;
+                localStorage.setItem('iflanche_cardapio', JSON.stringify(cardapio));
+            }
+
+            const tbody = document.getElementById('tabelaCorpo');
+            tbody.innerHTML = ''; // Limpa antes de desenhar
+
+            cardapio.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="day">${item.dia}</td>
+                    <td>${item.manha}</td>
+                    <td>${item.almoco}</td>
+                    <td>${item.tarde}</td>
+                    <td class="actions-cell">
+                        <button class="btn-action edit" onclick="abrirModal(${item.id})">✏️</button>
+                        <button class="btn-action delete" onclick="deletar(${item.id})">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 3. Abrir Modal (Funciona para Criar E Editar)
+        function abrirModal(id = null) {
+            const modal = document.getElementById('modalEdicao');
+            const titulo = document.getElementById('tituloModal');
+            
+            // Limpa formulário
+            document.getElementById('formRefeicao').reset();
+
+            if (id) {
+                // MODO EDIÇÃO: Preenche os campos com os dados existentes
+                titulo.innerText = "Editar Refeição";
+                const cardapio = JSON.parse(localStorage.getItem('iflanche_cardapio'));
+                const item = cardapio.find(c => c.id === id);
+                
+                document.getElementById('idRefeicao').value = item.id;
+                document.getElementById('diaSemana').value = item.dia;
+                document.getElementById('lancheManha').value = item.manha;
+                document.getElementById('almoco').value = item.almoco;
+                document.getElementById('lancheTarde').value = item.tarde;
+            } else {
+                // MODO CRIAÇÃO
+                titulo.innerText = "Nova Refeição";
+                document.getElementById('idRefeicao').value = '';
+            }
+
+            modal.style.display = "flex";
+        }
+
+        function fecharModal() {
+            document.getElementById('modalEdicao').style.display = "none";
+        }
+
+        // 4. Salvar (Adicionar ou Editar)
+        function salvarRefeicao(event) {
+            event.preventDefault();
+
+            const id = document.getElementById('idRefeicao').value;
+            const dia = document.getElementById('diaSemana').value;
+            const manha = document.getElementById('lancheManha').value;
+            const almoco = document.getElementById('almoco').value;
+            const tarde = document.getElementById('lancheTarde').value;
+
+            let cardapio = JSON.parse(localStorage.getItem('iflanche_cardapio')) || [];
+
+            if (id) {
+                // Editar Existente
+                const index = cardapio.findIndex(c => c.id == id);
+                if (index !== -1) {
+                    cardapio[index] = { id: parseInt(id), dia, manha, almoco, tarde };
+                }
+            } else {
+                // Criar Novo (Gera um ID aleatório baseado no tempo)
+                const novoId = Date.now(); 
+                cardapio.push({ id: novoId, dia, manha, almoco, tarde });
+            }
+
+            localStorage.setItem('iflanche_cardapio', JSON.stringify(cardapio));
+            fecharModal();
+            renderizarTabela();
+        }
+
+        // 5. Deletar
+        function deletar(id) {
+            if (confirm("Tem certeza que deseja excluir esta refeição?")) {
+                let cardapio = JSON.parse(localStorage.getItem('iflanche_cardapio'));
+                cardapio = cardapio.filter(item => item.id !== id);
+                localStorage.setItem('iflanche_cardapio', JSON.stringify(cardapio));
+                renderizarTabela();
+            }
+        }
+
+        // Fechar modal clicando fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalEdicao');
+            if (event.target == modal) {
+                fecharModal();
             }
         }
     </script>

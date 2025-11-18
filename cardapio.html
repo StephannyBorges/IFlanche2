@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFLANCHE - Painel do Aluno</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-dashboard">
+
+    <header class="main-header">
+        <div class="logo">
+            <a href="index.html">IFLANCHE</a>
+        </div>
+        <nav>
+            <a href="index.html" class="btn-logout">Sair</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        
+        <div class="dashboard-wrapper">
+            <aside class="profile-card">
+                <div class="avatar-container">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Foto do Aluno" class="avatar">
+                </div>
+                
+                <div class="profile-info">
+                    <h3 id="nomeAluno">Carregando...</h3> 
+                    <span class="badge-status">Ativo</span>
+                    
+                    <div class="info-item">
+                        <label>Matrícula:</label>
+                        <p id="matriculaAluno">...</p>
+                    </div>
+                    
+                    <div class="info-item">
+                        <label>Curso:</label>
+                        <p>Técnico em Informática para internet</p>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Campus:</label>
+                        <p>São Paulo do Potengi</p>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="content-area">
+                <div class="section-header">
+                    <h1>Cardápio da Semana</h1>
+                    <p>Confira os horários e refeições disponíveis.</p>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="meal-table">
+                        <thead>
+                            <tr>
+                                <th>Dia da Semana</th>
+                                <th>Lanche Manhã<br><span class="time">08h30 - 08h50</span></th>
+                                <th>Almoço<br><span class="time">11h15 - 13h30</span></th>
+                                <th>Lanche Tarde<br><span class="time">14h30 - 14h50</span></th>
+                                <th>Jantar<br><span class="time">A partir das 18h00</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="day">Segunda-feira</td>
+                                <td>Fruta + Iogurte</td>
+                                <td>Feijoada Completa + Laranja</td>
+                                <td>Bolo de Cenoura + Suco</td>
+                                <td>Sopa de Legumes com Pão</td>
+                            </tr>
+                            <tr>
+                                <td class="day">Terça-feira</td>
+                                <td>Pão com Queijo</td>
+                                <td>Frango Assado + Purê</td>
+                                <td>Salada de Frutas</td>
+                                <td>Cuscuz com Carne Moída</td>
+                            </tr>
+                            <tr>
+                                <td class="day">Quarta-feira</td>
+                                <td>Biscoito + Achocolatado</td>
+                                <td>Carne de Sol + Macaxeira</td>
+                                <td>Sanduíche Natural</td>
+                                <td>Inhame com Frango</td>
+                            </tr>
+                            <tr>
+                                <td class="day">Quinta-feira</td>
+                                <td>Melancia em Fatias</td>
+                                <td>Estrogonofe de Frango</td>
+                                <td>Pipoca + Suco de Caju</td>
+                                <td>Mingau de Aveia</td>
+                            </tr>
+                            <tr>
+                                <td class="day">Sexta-feira</td>
+                                <td>Tapioca com Manteiga</td>
+                                <td>Peixe ao Molho de Coco</td>
+                                <td>Gelatina + Biscoito</td>
+                                <td>Pão com Ovo + Café</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const matriculaSalva = localStorage.getItem('iflanche_matricula');
+
+            if (matriculaSalva) {
+                document.getElementById('matriculaAluno').innerText = matriculaSalva;
+                
+                // Simulação de nome baseada na matrícula do print
+                if (matriculaSalva === '20221181110040') {
+                    document.getElementById('nomeAluno').innerText = 'João da Silva';
+                } else {
+                    document.getElementById('nomeAluno').innerText = 'Aluno(a) IFRN';
+                }
+            } else {
+                document.getElementById('nomeAluno').innerText = 'Visitante';
+                document.getElementById('matriculaAluno').innerText = '---';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<h2>Editar Foto de Perfil</h2>
+
+{% if aluno.foto_perfil %}
+    <p>Foto atual:</p>
+    <img src="{{ aluno.foto_perfil.url }}" alt="Foto de Perfil" width="150">
+{% else %}
+    <p>Sem foto de perfil.</p>
+{% endif %}
+
+<hr>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    {{ form.as_p }}
+    
+    <button type="submit">Salvar Foto</button>
+</form>

@@ -14,7 +14,13 @@
             <a href="{% url 'index' %}">IFLANCHE</a>
         </div>
         <nav>
-            <a href="{% url 'login' %}" class="btn-logout" onclick="document.cookie = 'iflanche_matricula=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';">Sair</a>
+            <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{% url 'login' %}">
+                <button type="submit" class="btn-logout" style="background:none; border:none; cursor:pointer; font:inherit; color: inherit;">
+                    Sair
+                </button>
+            </form>
         </nav>
     </header>
 
@@ -70,7 +76,6 @@
                                 <th>Lanche Manhã<br><span class="time">08h30 - 08h50</span></th>
                                 <th>Almoço<br><span class="time">11h15 - 13h30</span></th>
                                 <th>Lanche Tarde<br><span class="time">14h30 - 14h50</span></th>
-                                <th>Jantar<br><span class="time">A partir das 18h00</span></th>
                             </tr>
                         </thead>
                         <tbody>

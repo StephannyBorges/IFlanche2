@@ -212,8 +212,9 @@ body {
 
 .meal-table th, .meal-table td {
     padding: 15px;
-    text-align: left;
+    text-align: center;
     border-bottom: 1px solid #eee;
+    width: 25%;
 }
 
 .meal-table th {

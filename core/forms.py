@@ -1,5 +1,6 @@
 from django import forms
 from .models import Cardapio
+from .models import Aluno 
 
 class CardapioForm(forms.ModelForm):
     class Meta:
@@ -18,3 +19,9 @@ class CardapioForm(forms.ModelForm):
             'almoco': forms.TextInput(attrs={'class': 'input-text', 'placeholder': 'Ex: Feijoada'}),
             'lanche_tarde': forms.TextInput(attrs={'class': 'input-text', 'placeholder': 'Ex: Bolo'}),
         }
+
+class AlunoPerfilForm(forms.ModelForm):
+    class Meta:
+        model = Aluno
+        # Aqui dizemos que só queremos mostrar o campo da foto no formulário
+        fields = ['foto_perfil']

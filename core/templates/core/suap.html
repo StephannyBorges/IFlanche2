@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - SUAP (Simulação)</title>
+    <style>
+        body { background-color: #2e7d32; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { background: white; padding: 30px; border-radius: 5px; width: 300px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        h1 { color: #333; margin-bottom: 5px; }
+        p { color: #666; font-size: 14px; margin-bottom: 20px; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background-color: #2e7d32; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
+        button:hover { background-color: #1b5e20; }
+        .aviso { background: #fff3cd; color: #856404; padding: 10px; font-size: 12px; margin-bottom: 10px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <div class="aviso">⚠️ MODO DE DESENVOLVIMENTO</div>
+        <h1>SUAP</h1>
+        <p>Sistema Unificado de Administração Pública</p>
+        
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="usuario" placeholder="Matrícula / Usuário" required>
+            <input type="password" name="senha" placeholder="Senha" required>
+            <button type="submit">Acessar</button>
+        </form>
+    </div>
+</body>
+</html>

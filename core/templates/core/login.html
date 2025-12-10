@@ -6,13 +6,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IFLANCHE - Acesso</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <style>
+        /* CSS RÁPIDO PARA AS ABAS */
+        .login-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            color: #666;
+            font-weight: bold;
+            width: 50%;
+        }
+        .tab-btn.active {
+            border-bottom: 3px solid #28a745; /* Verde IF */
+            color: #28a745;
+        }
+        .btn-suap {
+            background-color: #28a745;
+            color: white;
+            padding: 15px;
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+        .btn-suap:hover {
+            background-color: #218838;
+        }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 5px; color: #333; }
+        .input-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .btn-login { width: 100%; padding: 10px; background: #333; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    </style>
 </head>
 <body class="page-login">
 
-    <div class="login-container">
+    <div class="login-container" style="max-width: 400px; margin: 50px auto; text-align: center; padding: 20px; background: white; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-radius: 8px;">
         <div class="login-header">
-            <h2>IFLANCHE</h2>
-            <p>Faça login para acessar o sistema</p>
+            <h2 style="color: #28a745;">IFLANCHE</h2>
+            <p>Escolha como deseja entrar:</p>
         </div>
 
         {% if erro %}
@@ -21,48 +67,57 @@
             </div>
         {% endif %}
 
-        <form method="POST" action="{% url 'login' %}">
-            {% csrf_token %} <div class="login-options">
-                <label>
-                    <input type="radio" name="tipo" value="aluno" checked onclick="toggleCampos(false)"> Aluno
-                </label>
-                <label>
-                    <input type="radio" name="tipo" value="servidor" onclick="toggleCampos(true)"> Servidor
-                </label>
-            </div>
+        <div class="login-tabs">
+            <button type="button" class="tab-btn active" id="tab-aluno" onclick="mudarAba('aluno')">SOU ALUNO</button>
+            <button type="button" class="tab-btn" id="tab-servidor" onclick="mudarAba('servidor')">SERVIDOR / CANTINA</button>
+        </div>
 
-            <div id="campos-servidor" style="display:none;">
+        <div id="conteudo-aluno">
+            <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
+                Alunos devem usar sua conta oficial do SUAP para acessar o cardápio e realizar pedidos.
+            </p>
+            <a href="{% url 'suap_login' %}" class="btn-suap">
+                🔐 Entrar com SUAP
+            </a>
+        </div>
+
+        <div id="conteudo-servidor" style="display: none;">
+            <form method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+                <input type="hidden" name="tipo_login" value="servidor">
+
                 <div class="input-group">
                     <label>Usuário</label>
-                    <input type="text" name="username" placeholder="Seu usuário admin">
+                    <input type="text" name="username" placeholder="Usuário administrativo">
                 </div>
 
                 <div class="input-group">
                     <label>Senha</label>
                     <input type="password" name="password" placeholder="Sua senha">
                 </div>
-            </div>
 
-            <div class="input-group" id="campo-matricula">
-                <label>Matrícula</label>
-                <input type="text" name="matricula_aluno" placeholder="Digite sua matrícula">
-            </div>
-
-            <button type="submit" class="btn-login">Entrar / Acessar</button>
-        </form>
+                <button type="submit" class="btn-login">Acessar Painel</button>
+            </form>
+        </div>
     </div>
 
     <script>
-        function toggleCampos(isServidor) {
-            const camposServidor = document.getElementById('campos-servidor');
-            const campoMatricula = document.getElementById('campo-matricula');
-            
-            if (isServidor) {
-                camposServidor.style.display = 'block';
-                campoMatricula.style.display = 'none';
+        function mudarAba(tipo) {
+            const tabAluno = document.getElementById('tab-aluno');
+            const tabServidor = document.getElementById('tab-servidor');
+            const contentAluno = document.getElementById('conteudo-aluno');
+            const contentServidor = document.getElementById('conteudo-servidor');
+
+            if (tipo === 'aluno') {
+                tabAluno.classList.add('active');
+                tabServidor.classList.remove('active');
+                contentAluno.style.display = 'block';
+                contentServidor.style.display = 'none';
             } else {
-                camposServidor.style.display = 'none';
-                campoMatricula.style.display = 'block';
+                tabAluno.classList.remove('active');
+                tabServidor.classList.add('active');
+                contentAluno.style.display = 'none';
+                contentServidor.style.display = 'block';
             }
         }
     </script>

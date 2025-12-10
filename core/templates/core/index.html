@@ -1,0 +1,99 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFLANCHE - Painel do Aluno</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="page-dashboard">
+
+    <header class="main-header">
+        <div class="logo">
+            <a href="{% url 'index' %}">IFLANCHE</a>
+        </div>
+        <nav>
+            <a href="{% url 'login' %}" class="btn-logout" onclick="document.cookie = 'iflanche_matricula=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';">Sair</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        
+        <div class="dashboard-wrapper">
+            <aside class="profile-card">
+                <div class="avatar-container">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Foto do Aluno" class="avatar">
+                </div>
+                
+                <div class="profile-info">
+                    <h3 id="nomeAluno">
+                        {% if matricula_contexto == '20221181110040' %}
+                            João da Silva
+                        {% elif matricula_contexto == 'Visitante' %}
+                            Visitante
+                        {% else %}
+                            Aluno(a) IFRN
+                        {% endif %}
+                    </h3> 
+                    
+                    <span class="badge-status">Ativo</span>
+                    
+                    <div class="info-item">
+                        <label>Matrícula:</label>
+                        <p>{{ matricula_contexto }}</p>
+                    </div>
+                    
+                    <div class="info-item">
+                        <label>Curso:</label>
+                        <p>{{ curso_contexto }}</p> 
+                    </div>
+
+                    <div class="info-item">
+                        <label>Campus:</label>
+                        <p>São Paulo do Potengi</p>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="content-area">
+                <div class="section-header">
+                    <h1>Cardápio da Semana</h1>
+                    <p>Confira os horários e refeições disponíveis.</p>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="meal-table">
+                        <thead>
+                            <tr>
+                                <th>Dia da Semana</th>
+                                <th>Lanche Manhã<br><span class="time">08h30 - 08h50</span></th>
+                                <th>Almoço<br><span class="time">11h15 - 13h30</span></th>
+                                <th>Lanche Tarde<br><span class="time">14h30 - 14h50</span></th>
+                                <th>Jantar<br><span class="time">A partir das 18h00</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for refeicao in cardapio %}
+                            <tr>
+                                <td class="day">{{ refeicao.dia_semana }}</td>
+                                <td>{{ refeicao.cafe_manha }}</td>
+                                <td>{{ refeicao.almoco }}</td>
+                                <td>{{ refeicao.lanche_tarde }}</td>
+                                <td>---</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" style="text-align:center; padding: 20px;">
+                                    Nenhum cardápio disponível no momento.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+</html>

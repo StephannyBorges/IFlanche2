@@ -1,0 +1,167 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFLANCHE - Área Administrativa</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="page-dashboard admin-mode">
+
+    <header class="main-header admin-header">
+        <div class="logo">
+            <a href="{% url 'login' %}">IFLANCHE <span style="font-size: 0.6em; opacity: 0.8;">ADMIN</span></a>
+        </div>
+        
+        <nav class="nav-items">
+            <div class="user-badge">
+                Olá, <span id="nomeServidor">Servidor</span>
+            </div>
+            <a href="{% url 'login' %}" class="btn-logout" onclick="localStorage.removeItem('iflanche_cargo')">Sair</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="dashboard-wrapper">
+            <section class="content-area full-width">
+                <div class="section-header flex-header">
+                    <div>
+                        <h1>Gerenciar Cardápio</h1>
+                        <p>Adicione ou edite as refeições da semana.</p>
+                    </div>
+                    <button class="btn-add" onclick="abrirModal()">+ Nova Refeição</button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="meal-table admin-table">
+                        <thead>
+                            <tr>
+                                <th>Dia</th>
+                                <th>Lanche Manhã</th>
+                                <th>Almoço</th>
+                                <th>Lanche Tarde</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cardapio %}
+                            <tr>
+                                <td class="day">{{ item.dia_semana }}</td>
+                                <td>{{ item.cafe_manha }}</td>
+                                <td>{{ item.almoco }}</td>
+                                <td>{{ item.lanche_tarde }}</td>
+                                <td class="actions-cell">
+                                    <button class="btn-action edit" 
+                                            onclick="abrirModal(
+                                                '{{ item.id }}', 
+                                                '{{ item.dia_semana }}', 
+                                                '{{ item.cafe_manha }}', 
+                                                '{{ item.almoco }}', 
+                                                '{{ item.lanche_tarde }}'
+                                            )">
+                                    </button>
+                                    
+                                    <a href="{% url 'deletar_refeicao' item.id %}" 
+                                       class="btn-action delete" 
+                                       onclick="return confirm('Tem certeza que deseja excluir?')"
+                                       style="text-decoration: none; display: inline-block;">
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" style="text-align:center; padding: 20px;">
+                                    Nenhuma refeição cadastrada.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div id="modalEdicao" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-modal" onclick="fecharModal()">&times;</span>
+            <h2 id="tituloModal">Nova Refeição</h2>
+            
+            <form id="formRefeicao" method="POST" action="{% url 'salvar_refeicao' %}">
+                {% csrf_token %} <input type="hidden" id="idRefeicao" name="id_refeicao">
+
+                <div class="input-group">
+                    <label>Dia da Semana</label>
+                    <select id="diaSemana" name="dia_semana" class="input-select" required>
+                        <option value="Segunda-feira">Segunda-feira</option>
+                        <option value="Terça-feira">Terça-feira</option>
+                        <option value="Quarta-feira">Quarta-feira</option>
+                        <option value="Quinta-feira">Quinta-feira</option>
+                        <option value="Sexta-feira">Sexta-feira</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Lanche Manhã</label>
+                    <input type="text" id="lancheManha" name="cafe_manha" placeholder="Ex: Fruta + Iogurte" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Almoço</label>
+                    <input type="text" id="almoco" name="almoco" placeholder="Ex: Feijoada" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Lanche Tarde</label>
+                    <input type="text" id="lancheTarde" name="lanche_tarde" placeholder="Ex: Bolo" required>
+                </div>
+
+                <button type="submit" class="btn-login" style="margin-top: 10px;">Salvar Dados</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Carregar nome do servidor (Visual apenas)
+        window.onload = function() {
+            const cargo = localStorage.getItem('iflanche_cargo');
+            if(cargo) document.getElementById('nomeServidor').innerText = cargo;
+        }
+
+        // Função simplificada: Apenas abre o modal e preenche os campos
+        function abrirModal(id = '', dia = '', manha = '', almoco = '', tarde = '') {
+            const modal = document.getElementById('modalEdicao');
+            const titulo = document.getElementById('tituloModal');
+            
+            // Preencher os campos do formulário
+            document.getElementById('idRefeicao').value = id;
+            document.getElementById('diaSemana').value = dia || 'Segunda-feira';
+            document.getElementById('lancheManha').value = manha;
+            document.getElementById('almoco').value = almoco;
+            document.getElementById('lancheTarde').value = tarde;
+
+            if (id) {
+                titulo.innerText = "Editar Refeição";
+            } else {
+                titulo.innerText = "Nova Refeição";
+                document.getElementById('formRefeicao').reset(); // Limpa se for novo
+            }
+
+            modal.style.display = "flex";
+        }
+
+        function fecharModal() {
+            document.getElementById('modalEdicao').style.display = "none";
+        }
+
+        // Fechar clicando fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalEdicao');
+            if (event.target == modal) {
+                fecharModal();
+            }
+        }
+    </script>
+</body>
+</html>

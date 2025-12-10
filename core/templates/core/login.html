@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFLANCHE - Acesso</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="page-login">
+
+    <div class="login-container">
+        <div class="login-header">
+            <h2>IFLANCHE</h2>
+            <p>Faça login para acessar o sistema</p>
+        </div>
+
+        {% if erro %}
+            <div style="background-color: #ffcccc; color: #cc0000; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+                {{ erro }}
+            </div>
+        {% endif %}
+
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %} <div class="login-options">
+                <label>
+                    <input type="radio" name="tipo" value="aluno" checked onclick="toggleCampos(false)"> Aluno
+                </label>
+                <label>
+                    <input type="radio" name="tipo" value="servidor" onclick="toggleCampos(true)"> Servidor
+                </label>
+            </div>
+
+            <div id="campos-servidor" style="display:none;">
+                <div class="input-group">
+                    <label>Usuário</label>
+                    <input type="text" name="username" placeholder="Seu usuário admin">
+                </div>
+
+                <div class="input-group">
+                    <label>Senha</label>
+                    <input type="password" name="password" placeholder="Sua senha">
+                </div>
+            </div>
+
+            <div class="input-group" id="campo-matricula">
+                <label>Matrícula</label>
+                <input type="text" name="matricula_aluno" placeholder="Digite sua matrícula">
+            </div>
+
+            <button type="submit" class="btn-login">Entrar / Acessar</button>
+        </form>
+    </div>
+
+    <script>
+        function toggleCampos(isServidor) {
+            const camposServidor = document.getElementById('campos-servidor');
+            const campoMatricula = document.getElementById('campo-matricula');
+            
+            if (isServidor) {
+                camposServidor.style.display = 'block';
+                campoMatricula.style.display = 'none';
+            } else {
+                camposServidor.style.display = 'none';
+                campoMatricula.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

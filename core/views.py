@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from .models import Cardapio
 from .forms import CardapioForm
 from .forms import AlunoPerfilForm
-from .forms import Aluno
+from .models import Aluno
 
 
 # --- CONFIGURAÇÕES DO SUAP (Preencha com seus dados reais!) ---
@@ -83,8 +83,49 @@ def logout_view(request):
 # --- 5. PAINEL DO ALUNO ---
 def index(request):
     itens_cardapio = Cardapio.objects.all()
-    matricula_aluno = request.COOKIES.get('iflanche_matricula', 'Visitante')
-    nome_aluno = request.COOKIES.get('iflanche_nome', '')
+    
+    # --- LÓGICA HÍBRIDA (BANCO + COOKIE) ---
+    
+    contexto = {
+        'cardapio': itens_cardapio,
+        'matricula_contexto': 'Visitante',
+        'nome_contexto': '',
+        'curso_contexto': 'Faça Login',
+        'foto_perfil_url': None # Novo campo para a foto
+    }
+
+    # CENÁRIO 1: Usuário logado de verdade (Django Auth)
+    if request.user.is_authenticated:
+        contexto['matricula_contexto'] = request.user.username
+        contexto['nome_contexto'] = request.user.first_name or request.user.username
+        
+        # Tenta pegar dados extras do Aluno (Foto e Curso)
+        try:
+            # O 'hasattr' evita erro se o aluno não tiver perfil
+            if hasattr(request.user, 'aluno'): 
+                contexto['foto_perfil_url'] = request.user.aluno.foto_perfil.url if request.user.aluno.foto_perfil else None
+                # Se você salvou curso no banco, pegue aqui: aluno.curso
+        except:
+            pass
+
+        # Lógica do Curso pela matrícula (User real)
+        if '111' in request.user.username: contexto['curso_contexto'] = 'Info. Internet'
+        elif '114' in request.user.username: contexto['curso_contexto'] = 'Meio Ambiente'
+        elif '101' in request.user.username: contexto['curso_contexto'] = 'Edificações'
+        else: contexto['curso_contexto'] = 'Integrado'
+
+    # CENÁRIO 2: Usuário do "SUAP Fake" (Apenas Cookie, sem banco)
+    elif 'iflanche_matricula' in request.COOKIES:
+        matricula = request.COOKIES.get('iflanche_matricula')
+        contexto['matricula_contexto'] = matricula
+        contexto['nome_contexto'] = request.COOKIES.get('iflanche_nome')
+        
+        if '111' in matricula: contexto['curso_contexto'] = 'Info. Internet'
+        elif '114' in matricula: contexto['curso_contexto'] = 'Meio Ambiente'
+        elif '101' in matricula: contexto['curso_contexto'] = 'Edificações'
+        else: contexto['curso_contexto'] = 'Integrado'
+
+    return render(request, 'core/index.html', context=contexto)
 
     # Lógica simples de curso baseada na matrícula
     if matricula_aluno == 'Visitante':
@@ -129,21 +170,33 @@ def deletar_refeicao(request, id):
     refeicao.delete()
     return redirect('admin_dashboard')
 
-@login_required # Garante que só quem está logado acessa
+@login_required
 def editar_perfil(request):
-    # Pega o aluno logado (ajuste a lógica conforme seu sistema de login)
-    # Exemplo supondo que o User do Django está ligado ao Aluno:
-    aluno = request.user.aluno 
+    # Tenta pegar o perfil do aluno, se não existir, cria um vazio agora mesmo
+    aluno, created = Aluno.objects.get_or_create(usuario=request.user)
 
     if request.method == 'POST':
-        # ATENÇÃO: O request.FILES é obrigatório para uploads!
         form = AlunoPerfilForm(request.POST, request.FILES, instance=aluno)
-        
         if form.is_valid():
             form.save()
-            return redirect('pagina_inicial') # Mude para onde quiser ir depois
+            return redirect('index') # Volta para a página inicial
     else:
-        # Se for GET, mostra o formulário preenchido com a foto atual
         form = AlunoPerfilForm(instance=aluno)
 
     return render(request, 'editar_perfil.html', {'form': form, 'aluno': aluno})
+
+@login_required
+def redirecionar_pos_login(request):
+    user = request.user
+    if user.is_staff or user.is_superuser:
+        return redirect('/painel_servidor/') 
+    
+    elif user.groups.filter(name='Nutricionistas').exists():
+        return redirect('/admin/') 
+
+    else:
+        return redirect('index') 
+    
+@login_required
+def painel_servidor(request):
+    return render(request, 'core/admin.html')

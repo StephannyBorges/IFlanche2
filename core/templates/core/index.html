@@ -29,7 +29,11 @@
         <div class="dashboard-wrapper">
             <aside class="profile-card">
                 <div class="avatar-container">
-                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Foto do Aluno" class="avatar">
+                    {% if foto_perfil_url %}
+                        <img src="{{ foto_perfil_url }}" alt="Foto do Aluno" class="avatar">
+                    {% else %}
+                        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Sem foto" class="avatar">
+                     {% endif %}
                 </div>
                 
                 <div class="profile-info">

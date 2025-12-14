@@ -1,18 +1,47 @@
-<h2>Editar Foto de Perfil</h2>
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil - IFLANCHE</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body class="page-profile">
 
-{% if aluno.foto_perfil %}
-    <p>Foto atual:</p>
-    <img src="{{ aluno.foto_perfil.url }}" alt="Foto de Perfil" width="150">
-{% else %}
-    <p>Sem foto de perfil.</p>
-{% endif %}
+    <div class="profile-card-container">
+        <div class="profile-card">
+            <div class="profile-header-bg">
+                <div class="avatar-container">
+                    <img src="{{ foto }}" alt="Avatar">
+                </div>
+            </div>
 
-<hr>
+            <div class="profile-body">
+                <h2>{{ nome }}</h2>
+                <p style="color: #666; margin-top: -5px; font-size: 0.9rem;">{{ matricula }}</p>
+                
+                <span class="badge-curso">{{ curso }}</span>
+                
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <span class="label">Campus</span>
+                        <span class="value">SP Potengi</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="label">Status</span>
+                        <span class="value active">Ativo</span>
+                    </div>
+                </div>
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    
-    {{ form.as_p }}
-    
-    <button type="submit">Salvar Foto</button>
-</form>
+                <div class="profile-actions">
+                    <a href="{% url 'index' %}" class="btn-back">Voltar ao Cardápio</a>
+                    <a href="{% url 'login' %}" onclick="document.cookie.split(';').forEach(c => document.cookie = c.replace(/^ +/, '').replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/'));" class="btn-logout">Sair do Sistema</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

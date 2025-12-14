@@ -4,105 +4,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IFLANCHE - Painel do Aluno</title>
+    <title>IFLANCHE - Cardápio</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos rápidos para o cabeçalho */
+        .main-header {
+            background-color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .logo a {
+            color: #28a745;
+            font-weight: bold;
+            font-size: 1.5rem;
+            text-decoration: none;
+        }
+        .header-options a {
+            color: #333;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .cardapio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .card-item {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .card-item:hover { transform: translateY(-5px); }
+        .card-img { height: 180px; overflow: hidden; }
+        .card-img img { width: 100%; height: 100%; object-fit: cover; }
+        .card-info { padding: 15px; }
+        .card-info h3 { margin: 0 0 10px 0; color: #333; }
+        .price { color: #28a745; font-weight: bold; font-size: 1.2rem; }
+        .empty-msg { text-align: center; color: #777; margin-top: 50px; }
+    </style>
 </head>
-<body class="page-dashboard">
+<body>
 
     <header class="main-header">
         <div class="logo">
-            <a href="{% url 'index' %}">IFLANCHE</a>
+            <a href="{% url 'logout' %}">
+                IFLANCHE <span style="font-size: 0.6em; color: #666; font-weight: normal;">(Sair)</span>
+            </a>
         </div>
-        <nav>
-            <form method="post" action="{% url 'logout' %}" style="display:inline;">
-                {% csrf_token %}
-                <input type="hidden" name="next" value="{% url 'login' %}">
-                <button type="submit" class="btn-logout" style="background:none; border:none; cursor:pointer; font:inherit; color: inherit;">
-                    Sair
-                </button>
-            </form>
-        </nav>
+
+        <div class="header-options">
+            <span style="margin-right: 15px; color: #666;">
+                Olá, {{ nome_contexto|default:"Visitante" }}
+            </span>
+            
+            <a href="{% url 'perfil' %}" class="btn-perfil">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                Meu Perfil
+            </a>
+        </div>
     </header>
 
     <div class="container">
         
-        <div class="dashboard-wrapper">
-            <aside class="profile-card">
-                <div class="avatar-container">
-                    {% if foto_perfil_url %}
-                        <img src="{{ foto_perfil_url }}" alt="Foto do Aluno" class="avatar">
-                    {% else %}
-                        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Sem foto" class="avatar">
-                     {% endif %}
-                </div>
-                
-                <div class="profile-info">
-                    <h3 id="nomeAluno">
-                        {% if matricula_contexto == '20221181110040' %}
-                            João da Silva
-                        {% elif matricula_contexto == 'Visitante' %}
-                            Visitante
-                        {% else %}
-                            Aluno(a) IFRN
-                        {% endif %}
-                    </h3> 
-                    
-                    <span class="badge-status">Ativo</span>
-                    
-                    <div class="info-item">
-                        <label>Matrícula:</label>
-                        <p>{{ matricula_contexto }}</p>
-                    </div>
-                    
-                    <div class="info-item">
-                        <label>Curso:</label>
-                        <p>{{ curso_contexto }}</p> 
-                    </div>
+        <h2 style="color: #333; margin-bottom: 20px; border-left: 5px solid #28a745; padding-left: 10px;">
+            Cardápio do Dia
+        </h2>
 
-                    <div class="info-item">
-                        <label>Campus:</label>
-                        <p>São Paulo do Potengi</p>
+        {% if cardapio %}
+            <div class="cardapio-grid">
+                {% for item in cardapio %}
+                    <div class="card-item">
+                        <div class="card-img">
+                            {% if item.imagem %}
+                                <img src="{{ item.imagem.url }}" alt="{{ item.nome }}">
+                            {% else %}
+                                <img src="https://via.placeholder.com/300x200?text=Sem+Foto" alt="Sem imagem">
+                            {% endif %}
+                        </div>
+                        <div class="card-info">
+                            <h3>{{ item.nome }}</h3>
+                            <p style="color: #666; font-size: 0.9rem;">{{ item.descricao }}</p>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                                <span class="price">R$ {{ item.preco }}</span>
+                                <span style="font-size: 0.8rem; background: #eee; padding: 4px 8px; border-radius: 4px;">{{ item.categoria }}</span>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </aside>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-msg">
+                <h3>Nenhum item disponível no momento.</h3>
+                <p>O cardápio está sendo atualizado pela cantina.</p>
+            </div>
+        {% endif %}
 
-            <section class="content-area">
-                <div class="section-header">
-                    <h1>Cardápio da Semana</h1>
-                    <p>Confira os horários e refeições disponíveis.</p>
-                </div>
-
-                <div class="table-responsive">
-                    <table class="meal-table">
-                        <thead>
-                            <tr>
-                                <th>Dia da Semana</th>
-                                <th>Lanche Manhã<br><span class="time">08h30 - 08h50</span></th>
-                                <th>Almoço<br><span class="time">11h15 - 13h30</span></th>
-                                <th>Lanche Tarde<br><span class="time">14h30 - 14h50</span></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for refeicao in cardapio %}
-                            <tr>
-                                <td class="day">{{ refeicao.dia_semana }}</td>
-                                <td>{{ refeicao.cafe_manha }}</td>
-                                <td>{{ refeicao.almoco }}</td>
-                                <td>{{ refeicao.lanche_tarde }}</td>
-                                <td>---</td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="5" style="text-align:center; padding: 20px;">
-                                    Nenhum cardápio disponível no momento.
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-        </div>
     </div>
+
 </body>
 </html>

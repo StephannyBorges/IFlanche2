@@ -3,14 +3,21 @@ from . import views
 
 urlpatterns = [
     path('', views.login_view, name='login'),
-    path('suap-auth/', views.suap_login_view, name='suap_login'),
-    path('suap-callback/', views.suap_callback, name='suap_callback'), # <--- NOVA ROTA OBRIGATÓRIA
+    
+    # Rota específica que recebe o POST do formulário do aluno
+    path('entrar-aluno/', views.processar_login_aluno, name='processar_login_aluno'),
+    
+    # Rota específica que recebe o POST do servidor
+    path('entrar-servidor/', views.processar_login_servidor, name='processar_login_servidor'),
+    
+    # A página nova que você pediu
+    path('cardapio-semanal/', views.cardapio_aluno, name='cardapio_aluno'),
+    
+    path('perfil/', views.perfil_aluno, name='perfil'),
     path('logout/', views.logout_view, name='logout'),
-    path('aluno/', views.index, name='index'),
-    path('gerenciar/', views.admin_dashboard, name='admin_dashboard'),
+    
+    # Admin
+    path('admin-painel/', views.admin_dashboard, name='admin_dashboard'),
     path('salvar/', views.salvar_refeicao, name='salvar_refeicao'),
     path('deletar/<int:id>/', views.deletar_refeicao, name='deletar_refeicao'),
-    path('perfil/editar/', views.editar_perfil, name='editar_perfil'),
-    path('redirecionar/', views.redirecionar_pos_login, name='redirecionar_login'),
-    path('painel_servidor/', views.painel_servidor, name='painel_servidor'),
 ]

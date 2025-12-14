@@ -1,0 +1,317 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardápio Semanal - Aluno</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            color: #333;
+        }
+
+        /* --- CABEÇALHO --- */
+        .main-header {
+            background-color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .logo a {
+            color: #2e8b57;
+            font-weight: 700;
+            font-size: 1.5rem;
+            text-decoration: none;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #555;
+            text-decoration: none;
+            cursor: pointer; /* Indica que é clicável */
+        }
+        
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #eee;
+        }
+
+        /* --- CONTAINER PRINCIPAL --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            color: #2e8b57;
+            margin-bottom: 5px;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .page-subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+        }
+
+        /* --- TABELA --- */
+        .cardapio-wrapper {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 50px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        thead {
+            background-color: #2e8b57;
+            color: white;
+        }
+
+        th {
+            padding: 20px;
+            text-align: center;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+        
+        th span {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        td {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            color: #555;
+            font-size: 0.95rem;
+            vertical-align: middle;
+        }
+
+        td.dia-col {
+            font-weight: 700;
+            color: #2e8b57;
+            background-color: #fcfcfc;
+            text-transform: capitalize;
+            width: 15%;
+        }
+
+        tbody tr:nth-child(even) { background-color: #fcfcfc; }
+        tbody tr:hover { background-color: #f0fdf4; }
+
+        .empty-msg {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+
+        /* --- ESTILOS DO MODAL (PERFIL) --- */
+        .modal-fundo {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-quadrado {
+            background-color: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            position: relative;
+            text-align: center;
+            animation: descer 0.3s ease-out;
+        }
+
+        @keyframes descer {
+            from {transform: translateY(-50px); opacity: 0;}
+            to {transform: translateY(0); opacity: 1;}
+        }
+
+        .fechar {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .fechar:hover { color: #000; }
+
+        .foto-grande {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid #2e8b57;
+            margin-bottom: 15px;
+            object-fit: cover;
+        }
+
+        .perfil-conteudo h2 {
+            color: #2e8b57;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+        }
+
+        .info-linha {
+            background: #f9f9f9;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .btn-voltar {
+            margin-top: 20px;
+            padding: 10px 30px;
+            background-color: #2e8b57;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-voltar:hover { background-color: #246d44; }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="logo">
+            <a href="{% url 'logout' %}">IFLANCHE <span style="font-size: 0.6em; color: #888; font-weight: normal;"></span></a>
+        </div>
+        
+        <div class="user-info" onclick="abrirPerfil()">
+            <div style="text-align: right;">
+                <span style="display: block; font-weight: bold; font-size: 0.9em;">Olá, {{ aluno.nome }}</span>
+                <span style="display: block; font-size: 0.75em; color: #888;">{{ aluno.curso }}</span>
+            </div>
+            <img src="{{ aluno.foto }}" alt="Foto Perfil">
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <h1 class="page-title">Cardápio da Semana</h1>
+        <p class="page-subtitle">Confira o que será servido no refeitório.</p>
+
+        <div class="cardapio-wrapper">
+            {% if cardapio %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>DIA</th>
+                            <th>LANCHE DA MANHÃ <span>08:30</span></th>
+                            <th>ALMOÇO <span>11:15</span></th>
+                            <th>LANCHE DA TARDE <span>14:30</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cardapio %}
+                        <tr>
+                            <td class="dia-col">{{ item.dia_da_semana }}</td>
+                            <td>{{ item.lanche_manha }}</td>
+                            <td>{{ item.almoco }}</td>
+                            <td>{{ item.lanche_tarde }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="empty-msg">
+                    <h3>O cardápio desta semana ainda não foi liberado.</h3>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div id="modalPerfil" class="modal-fundo">
+        <div class="modal-quadrado">
+            <span class="fechar" onclick="fecharPerfil()">&times;</span>
+            
+            <div class="perfil-conteudo">
+                <img src="{{ aluno.foto }}" alt="Foto do Aluno" class="foto-grande">
+                
+                <h2>{{ aluno.nome }}</h2>
+                
+                <div class="info-linha">
+                    <strong>Matrícula:</strong>
+                    <span>{{ aluno.matricula }}</span>
+                </div>
+
+                <div class="info-linha">
+                    <strong>Curso:</strong>
+                    <span>{{ aluno.curso }}</span>
+                </div>
+
+                <div class="info-linha">
+                    <strong>Campus:</strong>
+                    <span>IFRN - São Paulo do Potengi</span>
+                </div>
+
+                <button onclick="fecharPerfil()" class="btn-voltar">Voltar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirPerfil() {
+            document.getElementById("modalPerfil").style.display = "block";
+        }
+
+        function fecharPerfil() {
+            document.getElementById("modalPerfil").style.display = "none";
+        }
+
+        // Fecha se clicar fora do quadrado branco
+        window.onclick = function(event) {
+            var modal = document.getElementById("modalPerfil");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+
+</body>
+</html>

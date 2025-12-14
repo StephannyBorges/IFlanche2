@@ -138,3 +138,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'redirecionar_login'
 LOGOUT_REDIRECT_URL = 'login'
+# Configurações de Login
+LOGIN_URL = 'login'  # Redireciona para sua view de login personalizada (name='login')
+LOGIN_REDIRECT_URL = 'admin_dashboard' # Para onde vai depois de logar (se for admin)
+LOGOUT_REDIRECT_URL = 'login' # Para onde vai depois de sair

@@ -150,6 +150,33 @@
             }
         }
     </script>
+    <script>
+        function openTab(tabName) {
+            // Esconde todos
+            document.getElementById('form-aluno').classList.add('hidden');
+            document.getElementById('form-servidor').classList.add('hidden');
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            // Mostra o selecionado
+            if (tabName === 'aluno') {
+                document.getElementById('form-aluno').classList.remove('hidden');
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+            } else {
+                document.getElementById('form-servidor').classList.remove('hidden');
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+            }
+        }
+
+        // TRUQUE NOVO: Se o Python mandou um erro, já abre a aba de servidor
+        // Verifica se existe uma mensagem de erro na tela
+        window.onload = function() {
+            // Se tiver texto dentro da div de erro (aquela vermelha), abrimos a aba servidor
+            var temErro = "{{ erro|default:'' }}";
+            if (temErro && temErro !== "") {
+                openTab('servidor');
+            }
+        };
+    </script>
 
 </body>
 </html>

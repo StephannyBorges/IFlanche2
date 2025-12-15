@@ -42,15 +42,39 @@ def processar_login_aluno(request):
         
     return redirect('login') # Se tentar entrar sem POST, volta pro login
 
-# 3. PROCESSAR LOGIN DO SERVIDOR
+# 3. PROCESSAR LOGIN DO SERVIDOR (CORRIGIDO)
 def processar_login_servidor(request):
     if request.method == 'POST':
         usuario = request.POST.get('username')
         senha = request.POST.get('password')
+        
+        # Tenta verificar se o usuário e senha existem no banco
         user = authenticate(request, username=usuario, password=senha)
+        
         if user is not None:
+            # SUCESSO: Faz o login do admin
             login(request, user)
-            return redirect('admin_dashboard')
+            
+            # Cria a resposta de redirecionamento para o painel
+            response = redirect('admin_dashboard')
+            
+            # LIMPEZA IMPORTANTE:
+            # Se entrou como admin, apagamos o cookie de aluno para evitar conflitos
+            response.delete_cookie('iflanche_matricula')
+            response.delete_cookie('iflanche_nome')
+            response.delete_cookie('iflanche_curso')
+            response.delete_cookie('iflanche_foto')
+            
+            return response
+        else:
+            # ERRO: Senha ou usuário errados
+            # Renderiza a página de login novamente, mas enviando um aviso de erro
+            # E força a aba 'servidor' a ficar aberta (se você ajustar o HTML depois, mas o erro já ajuda)
+            return render(request, 'core/login.html', {
+                'erro': 'Usuário ou senha incorretos. Tente novamente.',
+                'aba_ativa': 'servidor' # Vamos usar isso no HTML opcionalmente
+            })
+            
     return redirect('login')
 
 # 4. PÁGINA DO CARDÁPIO (EXCLUSIVA DO ALUNO)

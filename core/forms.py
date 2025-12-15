@@ -1,27 +1,13 @@
 from django import forms
-from .models import Cardapio
-from .models import Aluno 
+from .models import Cardapio, Aluno
 
 class CardapioForm(forms.ModelForm):
     class Meta:
         model = Cardapio
-        fields = ['dia_semana', 'cafe_manha', 'almoco', 'lanche_tarde']
-        # Aqui estilizamos os inputs para ficarem bonitos no HTML (opcional)
-        widgets = {
-            'dia_semana': forms.Select(choices=[
-                ('Segunda-feira', 'Segunda-feira'),
-                ('Terça-feira', 'Terça-feira'),
-                ('Quarta-feira', 'Quarta-feira'),
-                ('Quinta-feira', 'Quinta-feira'),
-                ('Sexta-feira', 'Sexta-feira')
-            ], attrs={'class': 'input-select'}),
-            'cafe_manha': forms.TextInput(attrs={'class': 'input-text', 'placeholder': 'Ex: Fruta + Iogurte'}),
-            'almoco': forms.TextInput(attrs={'class': 'input-text', 'placeholder': 'Ex: Feijoada'}),
-            'lanche_tarde': forms.TextInput(attrs={'class': 'input-text', 'placeholder': 'Ex: Bolo'}),
-        }
+        # CORREÇÃO: Aqui estava 'cafe_manha', mudamos para 'lanche_manha'
+        fields = ['dia_semana', 'lanche_manha', 'almoco', 'lanche_tarde']
 
-class AlunoPerfilForm(forms.ModelForm):
+class AlunoForm(forms.ModelForm):
     class Meta:
         model = Aluno
-        # Aqui dizemos que só queremos mostrar o campo da foto no formulário
-        fields = ['foto_perfil']
+        fields = ['foto'] # Usado para o aluno enviar a foto de perfil

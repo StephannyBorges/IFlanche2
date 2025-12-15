@@ -24,6 +24,11 @@
             font-size: 1.5rem;
             text-decoration: none;
         }
+        .header-options {
+            display: flex;
+            align-items: center;
+            gap: 15px; /* Espaço entre os itens */
+        }
         .header-options a {
             color: #333;
             text-decoration: none;
@@ -56,19 +61,35 @@
         .card-info h3 { margin: 0 0 10px 0; color: #333; }
         .price { color: #28a745; font-weight: bold; font-size: 1.2rem; }
         .empty-msg { text-align: center; color: #777; margin-top: 50px; }
+        
+        /* Estilo para o botão de sair */
+        .btn-sair {
+            background: none;
+            border: none;
+            color: #dc3545; /* Cor vermelha para sair */
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            padding: 0;
+            margin-left: 10px;
+        }
+        .btn-sair:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
 
     <header class="main-header">
         <div class="logo">
-            <a href="{% url 'logout' %}">
-                IFLANCHE <span style="font-size: 0.6em; color: #666; font-weight: normal;">(Sair)</span>
+            <a href="{% url 'index' %}">
+                IFLANCHE
             </a>
         </div>
 
         <div class="header-options">
-            <span style="margin-right: 15px; color: #666;">
+            <span style="color: #666;">
                 Olá, {{ nome_contexto|default:"Visitante" }}
             </span>
             
@@ -76,6 +97,13 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                 Meu Perfil
             </a>
+
+            <form action="{% url 'logout' %}" method="post" style="display: inline-flex;">
+                {% csrf_token %}
+                <button type="submit" class="btn-sair">
+                    (Sair)
+                </button>
+            </form>
         </div>
     </header>
 
